@@ -1,0 +1,6 @@
+@Claims_HostAddress = http://localhost:5272
+
+GET {{Claims_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -14,6 +14,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{AED9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway.Api", "src\Gateway\Gateway.Api\Gateway.Api.csproj", "{24086171-A217-47DA-AE1A-1740755B11D6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B5B54779-BD80-4479-91A5-CE282FB1C843}"
+	ProjectSection(SolutionItems) = preProject
+		compose.yaml = compose.yaml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Claims.Domain.Tests", "tests\Claims.Domain.Tests\Claims.Domain.Tests.csproj", "{208DF1F3-ED39-4438-AB7F-606E07A601CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +81,18 @@ Global
 		{24086171-A217-47DA-AE1A-1740755B11D6}.Release|x64.Build.0 = Release|Any CPU
 		{24086171-A217-47DA-AE1A-1740755B11D6}.Release|x86.ActiveCfg = Release|Any CPU
 		{24086171-A217-47DA-AE1A-1740755B11D6}.Release|x86.Build.0 = Release|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Debug|x64.Build.0 = Debug|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Debug|x86.Build.0 = Debug|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Release|x64.ActiveCfg = Release|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Release|x64.Build.0 = Release|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Release|x86.ActiveCfg = Release|Any CPU
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,5 +104,6 @@ Global
 		{35547C8A-56C9-4617-AF88-DF8171D46F00} = {AB582CF0-0528-4FAB-AECE-AAB949FF3626}
 		{AED96AFE-57EF-6E39-F299-EE658E7FE530} = {B387B0E7-EE00-4704-A9E4-71105F6A8E9A}
 		{24086171-A217-47DA-AE1A-1740755B11D6} = {AED96AFE-57EF-6E39-F299-EE658E7FE530}
+		{208DF1F3-ED39-4438-AB7F-606E07A601CE} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

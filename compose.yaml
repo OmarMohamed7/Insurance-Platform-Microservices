@@ -1,0 +1,57 @@
+﻿name: insurance-platform
+services:
+  # Postgres Database
+  postgres:
+    image: postgres:16
+#    container_name: Insurance_Platform
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5435:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      retries: 5
+  
+  rabbitmq:
+    image: rabbitmq:4-management
+#    container_name: Insurance_Platform
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+
+#  claims:
+#    image: claims
+#    build:
+#      context: .
+#      dockerfile: src/Services/Claims/Dockerfile
+#
+#  gateway.api:
+#    image: gateway.api
+#    build:
+#      context: .
+#      dockerfile: src/Gateway/Gateway.Api/Dockerfile
+#
+#  notifications:
+#    image: notifications
+#    build:
+#      context: .
+#      dockerfile: src/Services/Notifications/Dockerfile
+#
+#  payment:
+#    image: payment
+#    build:
+#      context: .
+#      dockerfile: src/Services/Payment/Dockerfile
+
+volumes:
+  postgres_data:

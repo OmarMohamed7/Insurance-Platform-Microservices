@@ -21,25 +21,21 @@ public class UnitOfWork(ClaimsDbContext db): IUnitOfWork
         {
             foreach (var domainEvent in claim.DomainEvents)
             {
-                if (domainEvent is not Domain.ClaimApproved approved)
+                var eventId = Guid.NewGuid();
+                var contract = ToContract(domainEvent, eventId);
+                if (contract is null)
                 {
                     continue;
                 }
 
-                var contract = new ClaimApprovedContract(
-                    EventId: Guid.NewGuid(),
-                    CorrelationId: approved.ClaimId,
-                    OccurredAt: approved.OccurredAt,
-                    ClaimId: approved.ClaimId,
-                    Amount: approved.Amount.Amount,
-                    Currency: approved.Amount.Currency);
+                var contractType = contract.GetType();
 
                 db.OutboxMessages.Add(new OutboxMessage
                 {
-                    Id = contract.EventId,
-                    Type = nameof(ClaimApprovedContract),
-                    Payload = JsonSerializer.Serialize(contract),
-                    OccurredAt = contract.OccurredAt
+                    Id = eventId,
+                    Type = contractType.Name,
+                    Payload = JsonSerializer.Serialize(contract, contractType),
+                    OccurredAt = domainEvent.OccurredAt
                 });
             }
 
@@ -48,4 +44,25 @@ public class UnitOfWork(ClaimsDbContext db): IUnitOfWork
 
         return db.SaveChangesAsync(cancellationToken);
     }
+
+    // The single place that decides which domain events leave the service. Returns null for internal-only events.
+    private static object? ToContract(IDomainEvent domainEvent, Guid eventId) => domainEvent switch
+    {
+        ClaimApproved e => new ClaimApprovedContract(
+            EventId: eventId,
+            CorrelationId: e.ClaimId,
+            OccurredAt: e.OccurredAt,
+            ClaimId: e.ClaimId,
+            Amount: e.Amount.Amount,
+            Currency: e.Amount.Currency),
+
+        ClaimRejected e => new ClaimRejectedContract(
+            EventId: eventId,
+            CorrelationId: e.ClaimId,
+            OccurredAt: e.OccurredAt,
+            ClaimId: e.ClaimId,
+            Reason: e.Reason),
+
+        _ => null
+    };
 }

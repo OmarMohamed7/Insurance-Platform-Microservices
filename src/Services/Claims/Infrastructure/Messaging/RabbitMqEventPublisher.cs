@@ -1,6 +1,6 @@
 using System.Text;
 using Claims.Application;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 
@@ -17,18 +17,14 @@ public sealed class RabbitMqOptions
     public string Exchange { get; set; } = "insurance.events";
 }
 
-public class RabbitMqEventPublisher(IOptions<RabbitMqOptions> options) : IEventPublisher, IDisposable
-{   
+public class RabbitMqEventPublisher(IOptions<RabbitMqOptions> options, ILogger<RabbitMqEventPublisher> logger) : IEventPublisher, IAsyncDisposable
+{
     private readonly RabbitMqOptions _options = options.Value;
-    private readonly ConnectionFactory _factory;
-    private IConnection _connection;
-    private IChannel _channel;
+    private IConnection? _connection;
+    private IChannel? _channel;
 
     // Using a SemaphoreSlim to prevent race conditions during lazy initialization
     private readonly SemaphoreSlim _lock = new(1, 1);
-    
-    private const string ExchangeName = "application-outbox-exchange";
-    
 
     public async Task PublishAsync(OutboxMessage message, CancellationToken ct)
     {
@@ -41,12 +37,12 @@ public class RabbitMqEventPublisher(IOptions<RabbitMqOptions> options) : IEventP
             MessageId = message.Id.ToString(),
             Type = message.Type,
         };
-        
+
         // With publisher confirms on, this awaits the broker's ack and throws if it is not confirmed
         await channel.BasicPublishAsync(
             exchange: _options.Exchange,
             routingKey: message.Type,
-            mandatory: false,
+            mandatory: true,
             basicProperties: properties,
             body: Encoding.UTF8.GetBytes(message.Payload),
             cancellationToken: ct
@@ -62,7 +58,8 @@ public class RabbitMqEventPublisher(IOptions<RabbitMqOptions> options) : IEventP
         try
         {
             if (_channel is { IsOpen: true }) return _channel;
-            await _connection.DisposeAsync();
+
+            await CloseAsync();
 
             var factory = new ConnectionFactory
             {
@@ -78,16 +75,24 @@ public class RabbitMqEventPublisher(IOptions<RabbitMqOptions> options) : IEventP
                     publisherConfirmationTrackingEnabled: true),
                 ct);
 
+            // mandatory: true makes the broker return messages no queue is bound to
+            _channel.BasicReturnAsync += (_, args) =>
+            {
+                logger.LogError(
+                    "RabbitMQ could not route message {MessageId} (routing key {RoutingKey}): {ReplyCode} {ReplyText}",
+                    args.BasicProperties.MessageId, args.RoutingKey, args.ReplyCode, args.ReplyText);
+                return Task.CompletedTask;
+            };
+
             await _channel.ExchangeDeclareAsync(
                 _options.Exchange, ExchangeType.Topic, durable: true, cancellationToken:
                 ct);
 
             return _channel;
-
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            logger.LogError(e, "Failed to connect to RabbitMQ at {Host}:{Port}", _options.Host, _options.Port);
             throw;
         }
         finally
@@ -96,10 +101,17 @@ public class RabbitMqEventPublisher(IOptions<RabbitMqOptions> options) : IEventP
         }
     }
 
-    public void Dispose()
+    private async Task CloseAsync()
     {
-        _connection.Dispose();
-        _channel.Dispose();
+        if (_channel is not null) await _channel.DisposeAsync();
+        if (_connection is not null) await _connection.DisposeAsync();
+        _channel = null;
+        _connection = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await CloseAsync();
         _lock.Dispose();
     }
 }

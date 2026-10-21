@@ -3,6 +3,7 @@ using Claims.Application;
 using Claims.Application.Handlers;
 using Claims.Infrastructure;
 using Claims.Infrastructure.Messaging;
+using Claims.Infrastructure.Oubtbox;
 using Claims.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,6 +43,7 @@ builder.Services.AddScoped<RejectClaimHandler>();
 
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.Section));
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
+builder.Services.AddHostedService<OutboxDispatcher>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

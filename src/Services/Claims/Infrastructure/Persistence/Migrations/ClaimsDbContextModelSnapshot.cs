@@ -56,6 +56,42 @@ namespace Claims.Infrastructure.Persistence.Migrations
                     b.ToTable("Claims");
                 });
 
+            modelBuilder.Entity("Claims.Infrastructure.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(75)
+                        .HasColumnType("character varying(75)");
+
+                    b.Property<DateTime>("OccurredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OccurredAt")
+                        .HasFilter("\"ProcessedAt\" IS NULL");
+
+                    b.ToTable("OutboxMessages");
+                });
+
             modelBuilder.Entity("Claims.Domain.Claim", b =>
                 {
                     b.OwnsOne("Claims.Domain.ClaimDecision", "Decision", b1 =>

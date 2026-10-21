@@ -6,6 +6,7 @@ namespace Claims.Infrastructure.Persistence;
 public sealed class ClaimsDbContext(DbContextOptions<ClaimsDbContext> options) : DbContext(options)
 {
     public DbSet<Claim> Claims => Set<Claim>();
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,5 +34,15 @@ public sealed class ClaimsDbContext(DbContextOptions<ClaimsDbContext> options) :
                 decision.Property(d => d.DecidedAt).HasColumnName("DecidedAt");
             });
         });
+
+        modelBuilder.Entity<OutboxMessage>(entity =>
+            {
+                entity.HasKey(c => c.Id);
+                entity.Property(o=> o.Type).HasMaxLength(200).IsRequired();
+                entity.Property(o=> o.Payload).HasColumnType("jsonb").IsRequired();
+                entity.Property(o=> o.Error).HasMaxLength(75);
+                entity.HasIndex(o=> o.OccurredAt).HasFilter("\"ProcessedAt\" IS NULL");
+            }
+        );
     }
 }

@@ -2,6 +2,7 @@ using Claims.Api.ExceptionHandling;
 using Claims.Application;
 using Claims.Application.Handlers;
 using Claims.Infrastructure;
+using Claims.Infrastructure.Messaging;
 using Claims.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,6 +38,10 @@ builder.Services.AddScoped<ListClaimsHandler>();
 builder.Services.AddScoped<StartReviewClaimHandler>();
 builder.Services.AddScoped<ApproveClaimHandler>();
 builder.Services.AddScoped<RejectClaimHandler>();
+
+
+builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.Section));
+builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

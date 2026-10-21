@@ -2,7 +2,7 @@
 
 Three small .NET services that never call each other directly. They react to events through RabbitMQ and use the **Outbox** and **Inbox** patterns, so a payment is never lost or processed twice.
 
-> **Status:** planning / Phase 0. See the [roadmap](#roadmap).
+> **Status:** [ Developing ] . See the [roadmap](#roadmap).
 
 ## Features (MVP)
 

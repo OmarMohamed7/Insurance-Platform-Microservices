@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Claims.Application;
 using Claims.Domain;
+using Claims.Infrastructure.Outbox;
 using Claims.Infrastructure.Persistence;
 using Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -48,6 +49,16 @@ public class UnitOfWork(ClaimsDbContext db): IUnitOfWork
     // The single place that decides which domain events leave the service. Returns null for internal-only events.
     private static object? ToContract(IDomainEvent domainEvent, Guid eventId) => domainEvent switch
     {
+        ClaimSubmitted e => new ClaimSubmittedContract(
+            EventId: eventId,
+            CorrelationId: e.ClaimId,
+            OccurredAt: e.OccurredAt,
+            ClaimId: e.ClaimId,
+            PolicyNumber: e.PolicyNumber,
+            ClaimantId: e.ClaimantId,
+            Amount: e.Amount.Amount,
+            Currency: e.Amount.Currency),
+
         ClaimApproved e => new ClaimApprovedContract(
             EventId: eventId,
             CorrelationId: e.ClaimId,

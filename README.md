@@ -117,7 +117,7 @@ Transitions live inside the `Claim` aggregate (Domain layer) and throw on illega
 - **Saga (choreography):** no central orchestrator. Each service reacts to events and emits the next one.
 - **Outbox (publisher side):** the state change and an `OutboxMessage` row are saved in the same DB transaction. A background dispatcher publishes unsent rows. This avoids "claim saved but event lost".
 - **Inbox / idempotency (consumer side):** RabbitMQ delivers at least once, so consumers store processed `EventId`s behind a unique index and skip duplicates. This prevents double payouts.
-- **Failure handling:** retry with delay on transient failures, dead-letter queue for poison messages, Hangfire for the outbox dispatcher, stuck-claim reminders and payment retry.
+- **Failure handling:** retry with delay on transient failures, dead-letter queue for poison messages, a `BackgroundService` for the outbox dispatcher, Hangfire for stuck-claim reminders and payment retry.
 
 ## Clean Architecture (per service)
 
@@ -165,7 +165,7 @@ InsurancePlatform/
 - PostgreSQL (one container, three separate databases)
 - RabbitMQ (with management UI)
 - YARP gateway, JWT auth
-- Hangfire for background jobs
+- Hangfire for scheduled jobs (reminders, payment retry); the outbox dispatcher is a plain `BackgroundService`
 - Docker Compose, Testcontainers
 
 ## Key decisions
@@ -193,7 +193,7 @@ Every service will expose `/health`. Configuration comes from environment variab
 
 - **Phase 0: Foundation.** Repo, solution structure, `docker-compose.yml` with RabbitMQ + PostgreSQL, `Contracts` project with the 5 events
 - **Phase 1: Claims service** (no messaging). Domain + unit tests, use cases, EF Core, endpoints
-- **Phase 2: Outbox + first event.** `OutboxMessage` in the same transaction, Hangfire dispatcher publishes `ClaimApproved`
+- **Phase 2: Outbox + first event.** `OutboxMessage` in the same transaction, `BackgroundService` dispatcher publishes the claim events
 - **Phase 3: Payment service.** Consume `ClaimApproved`, inbox for idempotency, fake provider, publish result via outbox
 - **Phase 4: Close the loop + Notification.** Claims consumes payment result, Notification logs everything
 - **Phase 5: Gateway + auth.** YARP routes, JWT, `Claimant` / `Admin` roles

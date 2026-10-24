@@ -1,5 +1,6 @@
 using System.Text;
 using Claims.Application;
+using Claims.Infrastructure.Outbox;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -103,7 +104,7 @@ public class RabbitMqEventPublisher(IOptions<RabbitMqOptions> options, ILogger<R
 
     private async Task CloseAsync()
     {
-        if (_channel is not null) await _channel.DisposeAsync();
+        if (_channel is not null) await _channel.DisposeAsync(); 
         if (_connection is not null) await _connection.DisposeAsync();
         _channel = null;
         _connection = null;

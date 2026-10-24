@@ -1,4 +1,5 @@
 using Claims.Domain;
+using Claims.Infrastructure.Outbox;
 using Microsoft.EntityFrameworkCore;
 
 namespace Claims.Infrastructure.Persistence;

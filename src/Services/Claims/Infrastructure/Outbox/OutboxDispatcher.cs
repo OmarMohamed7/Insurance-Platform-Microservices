@@ -2,7 +2,7 @@ using Claims.Application;
 using Claims.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace Claims.Infrastructure.Oubtbox;
+namespace Claims.Infrastructure.Outbox;
 
 // Polls the outbox and publishes unsent rows. Delivery is at-least-once: a crash after publishing but before
 // the commit means the row is sent again, which is why consumers need an inbox.
@@ -14,7 +14,7 @@ public sealed class OutboxDispatcher(
     private const int BatchSize = 20;
     private const int MaxAttempts = 10;
     private const int MaxErrorLength = 75; // matches the Error column
-    private static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(5);
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

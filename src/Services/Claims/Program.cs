@@ -3,7 +3,7 @@ using Claims.Application;
 using Claims.Application.Handlers;
 using Claims.Infrastructure;
 using Claims.Infrastructure.Messaging;
-using Claims.Infrastructure.Oubtbox;
+using Claims.Infrastructure.Outbox;
 using Claims.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 

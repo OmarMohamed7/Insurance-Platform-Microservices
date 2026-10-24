@@ -1,4 +1,4 @@
-namespace Claims.Infrastructure;
+namespace Claims.Infrastructure.Outbox;
 
 // An outbox message is a database row that stands in for an event you want to publish but haven't sent yet.
 
@@ -14,7 +14,7 @@ namespace Claims.Infrastructure;
 // Claims table:        Status = Approved
 // OutboxMessages:      Type = "ClaimApproved", Payload = {...json...}, ProcessedAt = null
 
-//Then a separate background job (Hangfire, in your roadmap) does the sending:
+//Then a separate background job does the sending:
 // 1. Read rows where ProcessedAt is null.
 // 2. Publish each to RabbitMQ.
 public sealed class OutboxMessage

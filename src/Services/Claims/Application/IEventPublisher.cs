@@ -1,4 +1,5 @@
 using Claims.Infrastructure;
+using Claims.Infrastructure.Outbox;
 
 namespace Claims.Application;
 

@@ -7,6 +7,6 @@ public sealed record StartReviewClaimEvent(
     DateTime OccurredAt
 ): IDomainEvent;
 
-public sealed record ClaimApproved(Guid ClaimId, Money Amount, DateTime OccurredAt) : IDomainEvent;
+public sealed record ClaimApproved(Guid ClaimId, string ClaimantId, Money Amount, DateTime OccurredAt) : IDomainEvent;
 
-public sealed record ClaimRejected(Guid ClaimId, string Reason, DateTime OccurredAt) : IDomainEvent;
+public sealed record ClaimRejected(Guid ClaimId, string ClaimantId, string Reason, DateTime OccurredAt) : IDomainEvent;

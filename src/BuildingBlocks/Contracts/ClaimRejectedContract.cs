@@ -5,4 +5,5 @@ public sealed record ClaimRejectedContract(
     Guid CorrelationId,
     DateTime OccurredAt,
     Guid ClaimId,
-    string Reason);
+    string Reason,
+    string ClaimantId);

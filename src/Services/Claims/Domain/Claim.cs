@@ -66,7 +66,7 @@ public sealed class Claim
 
         Status = ClaimStatus.Approved;
         Decision = ClaimDecision.Approved(null, decidedBy, now);
-        _events.Add(new ClaimApproved(Id, Amount, now));
+        _events.Add(new ClaimApproved(Id, ClaimantId, Amount, now));
     }
 
     public void Reject(string reason, string decidedBy, DateTime now)
@@ -77,7 +77,7 @@ public sealed class Claim
 
         Status = ClaimStatus.Rejected;
         Decision = ClaimDecision.Rejected(reason, decidedBy, now);
-        _events.Add(new ClaimRejected(Id, reason, now));
+        _events.Add(new ClaimRejected(Id, ClaimantId, reason, now));
     }
 
     public void MarkPaid()
@@ -96,7 +96,7 @@ public sealed class Claim
     {
         EnsureStatus(ClaimStatus.PaymentFailed, ClaimStatus.Approved);
         Status = ClaimStatus.Approved;
-        _events.Add(new ClaimApproved(Id, Amount, now));
+        _events.Add(new ClaimApproved(Id, ClaimantId, Amount, now));
     }
 
     public void ClearDomainEvents() => _events.Clear();

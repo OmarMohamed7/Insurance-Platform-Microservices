@@ -6,4 +6,5 @@ public sealed record ClaimApprovedContract(
     DateTime OccurredAt,
     Guid ClaimId,
     decimal Amount,
-    string Currency);
+    string Currency,
+    string ClaimantId);

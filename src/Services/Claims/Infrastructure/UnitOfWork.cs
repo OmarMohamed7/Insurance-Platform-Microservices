@@ -65,14 +65,17 @@ public class UnitOfWork(ClaimsDbContext db): IUnitOfWork
             OccurredAt: e.OccurredAt,
             ClaimId: e.ClaimId,
             Amount: e.Amount.Amount,
-            Currency: e.Amount.Currency),
+            Currency: e.Amount.Currency,
+            ClaimantId: e.ClaimantId),
 
         ClaimRejected e => new ClaimRejectedContract(
             EventId: eventId,
             CorrelationId: e.ClaimId,
             OccurredAt: e.OccurredAt,
             ClaimId: e.ClaimId,
-            Reason: e.Reason),
+            
+            Reason: e.Reason,
+            ClaimantId: e.ClaimantId),
 
         _ => null
     };

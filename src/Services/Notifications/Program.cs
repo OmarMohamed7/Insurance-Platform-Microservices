@@ -27,6 +27,7 @@ builder.Services.AddDbContext<NotificationDbContext>((_, options) =>
 
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<INotificationSender, LoggingNotificationSender>();
 builder.Services.AddScoped<ClaimEventNotificationHandler>();
 
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.Section));

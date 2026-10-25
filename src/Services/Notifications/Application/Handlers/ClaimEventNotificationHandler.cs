@@ -4,7 +4,10 @@ using Notifications.Domain;
 namespace Notifications.Application.Handlers;
 
 // Turns a claim event into a stored notification. Safe to call twice with the same event: the second call does nothing.
-public sealed class ClaimEventNotificationHandler(INotificationRepository repository, IUnitOfWork unitOfWork)
+public sealed class ClaimEventNotificationHandler(
+    INotificationRepository repository,
+    IUnitOfWork unitOfWork,
+    INotificationSender sender)
 {
     public async Task HandleAsync(object contract, CancellationToken ct)
     {
@@ -15,6 +18,9 @@ public sealed class ClaimEventNotificationHandler(INotificationRepository reposi
 
         await repository.AddAsync(notification, ct);
         await unitOfWork.SaveChangesAsync(ct);
+
+        // Send only after the row is saved, so a notification is never delivered without being recorded.
+        await sender.SendAsync(notification, ct);
     }
 
     public static Notification Map(object contract) => contract switch

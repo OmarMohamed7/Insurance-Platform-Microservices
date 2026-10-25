@@ -1,4 +1,4 @@
-@Payment_HostAddress = http://localhost:5266
+@Payment_HostAddress = http://localhost:5102
 
 GET {{Payment_HostAddress}}/weatherforecast/
 Accept: application/json

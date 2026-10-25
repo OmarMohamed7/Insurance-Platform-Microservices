@@ -6,6 +6,8 @@ include:
     env_file: .env
   - path: src/Services/Notifications/compose.yaml
     env_file: .env
+  - path: src/Gateway/Gateway.Api/compose.yaml
+    env_file: .env
 
 services:
   # Postgres Database
@@ -42,12 +44,6 @@ services:
       timeout: 10s
       retries: 5
 
-#  gateway.api:
-#    image: gateway.api
-#    build:
-#      context: .
-#      dockerfile: src/Gateway/Gateway.Api/Dockerfile
-#
 #  payment:
 #    image: payment
 #    build:

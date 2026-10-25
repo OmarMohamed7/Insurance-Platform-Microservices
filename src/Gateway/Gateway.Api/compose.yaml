@@ -1,0 +1,14 @@
+services:
+  gateway:
+    image: gateway.api
+    build:
+      context: ../../..
+      dockerfile: src/Gateway/Gateway.Api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - claims
+      - notifications
+    environment:
+      Swagger__Enabled: "true"   # local Docker is a dev setup; leave unset in a real deployment
+    ports:
+      - "5100:8080"

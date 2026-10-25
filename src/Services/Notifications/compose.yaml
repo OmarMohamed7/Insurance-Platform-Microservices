@@ -18,4 +18,4 @@ services:
       RabbitMq__Password: ${RABBITMQ_PASSWORD}
       Database__MigrateOnStartup: "true"
     ports:
-      - "5052:8080"
+      - "5103:8080"

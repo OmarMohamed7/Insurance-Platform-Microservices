@@ -66,4 +66,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Containers start with an empty database, so let the service create its own tables when asked to.
+if (app.Configuration.GetValue<bool>("Database:MigrateOnStartup"))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    await scope.ServiceProvider.GetRequiredService<ClaimsDbContext>().Database.MigrateAsync();
+}
+
 app.Run();

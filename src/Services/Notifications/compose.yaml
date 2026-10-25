@@ -1,0 +1,21 @@
+services:
+  notifications:
+    image: notifications
+    build:
+      context: ../../..
+      dockerfile: src/Services/Notifications/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__NotificationDb: Host=postgres;Port=5432;Database=notification;Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+      RabbitMq__Host: rabbitmq
+      RabbitMq__User: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASSWORD}
+      Database__MigrateOnStartup: "true"
+    ports:
+      - "5052:8080"
